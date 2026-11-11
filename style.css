@@ -1,4 +1,20 @@
-/* GENERAL SETTINGS */
+/* ==========================================================
+   ECOVERSE - mobile-first responsive stylesheet
+   ========================================================== */
+
+:root {
+    --bg: #071b13;
+    --bg-alt: #0a241a;
+    --card: #103326;
+    --border: #28513d;
+    --lime: #b5f36b;
+    --text: #ffffff;
+    --muted: #c5d5cb;
+    --nav-h: 70px;
+    --pad-x: 6%;
+}
+
+/* ---------- GENERAL ---------- */
 
 * {
     margin: 0;
@@ -8,492 +24,327 @@
 
 html {
     scroll-behavior: smooth;
+    scroll-padding-top: var(--nav-h);
+    -webkit-text-size-adjust: 100%;
 }
 
 body {
-    font-family: 'DM Sans', sans-serif;
-    background-color: #071b13;
-    color: #ffffff;
+    font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    overflow-x: hidden;
 }
 
+img { max-width: 100%; height: auto; }
 
-/* NAVIGATION BAR */
+a, button, input { -webkit-tap-highlight-color: transparent; }
+
+:focus-visible {
+    outline: 3px solid var(--lime);
+    outline-offset: 3px;
+}
+
+/* ---------- NAVIGATION (mobile first) ---------- */
 
 .navbar {
-    width: 100%;
-    height: 85px;
-
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    min-height: var(--nav-h);
     display: flex;
     align-items: center;
     justify-content: space-between;
-
-    padding: 0 8%;
-
-    background-color: #071b13;
+    padding: 0 var(--pad-x);
+    background-color: rgba(7, 27, 19, 0.96);
+    border-bottom: 1px solid rgba(40, 81, 61, 0.6);
+    backdrop-filter: blur(8px);
 }
-
-
-/* LOGO */
 
 .logo {
-    font-size: 27px;
+    font-size: 24px;
     font-weight: 800;
-    color: #b5f36b;
+    color: var(--lime);
+    text-decoration: none;
 }
 
+/* hamburger */
+.nav-toggle {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 46px;
+    height: 46px;
+    padding: 0 11px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+}
 
-/* NAVIGATION LINKS */
+.nav-toggle span {
+    display: block;
+    height: 2px;
+    background: var(--lime);
+    border-radius: 2px;
+    transition: transform 0.25s ease, opacity 0.2s ease;
+}
+
+.nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* dropdown panel on small screens */
+.nav-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+    padding: 12px var(--pad-x) 24px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    max-height: calc(100dvh - var(--nav-h));
+    overflow-y: auto;
+}
+
+.nav-menu.open { display: flex; }
 
 .nav-links {
-    display: flex;
-    gap: 35px;
     list-style: none;
+    display: flex;
+    flex-direction: column;
 }
 
 .nav-links a {
+    display: block;
+    padding: 13px 4px;
     text-decoration: none;
     color: #d1dfd5;
-    font-size: 14px;
-    transition: 0.3s;
+    font-size: 16px;
+    border-bottom: 1px solid rgba(40, 81, 61, 0.5);
+    transition: color 0.3s;
 }
 
-.nav-links a:hover {
-    color: #b5f36b;
-}
-
-
-/* NAVIGATION BUTTON */
+.nav-links a:hover,
+.nav-links a.active { color: var(--lime); }
 
 .nav-button {
-    background-color: #b5f36b;
-    color: #071b13;
-
+    display: block;
+    text-align: center;
+    background-color: var(--lime);
+    color: var(--bg);
     text-decoration: none;
-
-    padding: 12px 20px;
-
+    padding: 14px 20px;
     border-radius: 30px;
-
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 700;
 }
 
-
-/* HERO SECTION */
+/* ---------- HERO ---------- */
 
 .hero {
-    min-height: 85vh;
-
+    min-height: 80vh;
+    min-height: 80svh;
     display: flex;
     align-items: center;
-
-    padding: 80px 12%;
-
-background:
-    linear-gradient(
-        rgba(7, 27, 19, 0.72),
-        rgba(7, 27, 19, 0.82)
-    ),
-    url("images/forest.jpg") center/cover no-repeat;
+    padding: 70px var(--pad-x);
+    background:
+        linear-gradient(rgba(7, 27, 19, 0.72), rgba(7, 27, 19, 0.82)),
+        url("images/forest.jpg") center / cover no-repeat;
 }
 
-
-/* HERO CONTENT */
-
-.hero-content {
-    max-width: 750px;
-}
-
-
-/* SMALL TAG */
+.hero-content { max-width: 750px; }
 
 .hero-tag {
     display: inline-block;
-
-    color: #b5f36b;
-
+    color: var(--lime);
     border: 1px solid #456b3c;
-
-    padding: 9px 16px;
-
+    padding: 8px 14px;
     border-radius: 30px;
-
-    font-size: 12px;
+    font-size: 11px;
     letter-spacing: 2px;
-
-    margin-bottom: 30px;
+    margin-bottom: 24px;
 }
-
-
-/* MAIN HEADING */
 
 .hero h1 {
-    font-size: 76px;
+    font-size: clamp(38px, 10vw, 76px);
     line-height: 1.1;
-
     font-weight: 800;
-
-    margin-bottom: 25px;
+    margin-bottom: 20px;
+    overflow-wrap: break-word;
 }
 
-.hero h1 span {
-    color: #b5f36b;
-}
-
-
-/* DESCRIPTION */
+.hero h1 span { color: var(--lime); }
 
 .hero p {
     color: #b8c9bd;
-
-    font-size: 17px;
-
+    font-size: clamp(15px, 2.2vw, 17px);
     line-height: 1.8;
-
     max-width: 580px;
-
-    margin-bottom: 35px;
+    margin-bottom: 32px;
 }
-
-
-/* HERO BUTTONS */
 
 .hero-buttons {
     display: flex;
-    gap: 18px;
+    gap: 14px;
     flex-wrap: wrap;
 }
 
 .primary-button,
 .secondary-button {
+    display: inline-block;
+    text-align: center;
     text-decoration: none;
-
     padding: 15px 24px;
-
     border-radius: 30px;
-
     font-size: 14px;
     font-weight: 700;
-
     transition: 0.3s;
 }
 
-.primary-button {
-    background-color: #b5f36b;
-    color: #071b13;
-}
+.primary-button { background-color: var(--lime); color: var(--bg); }
+.secondary-button { border: 1px solid #718779; color: white; }
 
-.secondary-button {
-    border: 1px solid #718779;
-    color: white;
-}
+.secondary-button:hover { border-color: var(--lime); color: var(--lime); }
 
-.primary-button:hover {
-    transform: translateY(-3px);
-}
+/* ---------- SHARED SECTION STYLES ---------- */
 
-.secondary-button:hover {
-    border-color: #b5f36b;
-    color: #b5f36b;
-}
-/* ABOUT SECTION */
-
-.about {
-    padding: 100px 12%;
-    background: #071b13;
+.about,
+.challenges,
+.solutions,
+.impact,
+.daily,
+.waste,
+.facts {
+    padding: 70px var(--pad-x);
     text-align: center;
 }
 
-.about-content {
-    max-width: 800px;
-    margin: auto;
-}
+.about, .challenges, .impact { background: var(--bg); }
+.solutions, .daily, .facts   { background: var(--bg-alt); }
+.waste { background: var(--bg); }
 
-.section-tag {
-    color: #b5f36b;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 2px;
-}
+.about-content { max-width: 800px; margin: auto; }
 
-.about h2 {
-    color: white;
-    font-size: 42px;
-    margin: 20px 0;
-}
-
-.about h2 span {
-    color: #b5f36b;
-}
-
-.about p {
-    color: #c5d5cb;
-    font-size: 16px;
-    line-height: 1.8;
-}
-/* CHALLENGES SECTION */
-
-.challenges {
-    padding: 100px 12%;
-    background: #071b13;
-    text-align: center;
-}
-
+.section-tag,
 .section-heading span {
-    color: #b5f36b;
-    font-size: 13px;
+    color: var(--lime);
+    font-size: 12px;
     font-weight: 700;
     letter-spacing: 2px;
 }
 
+.about h2,
 .section-heading h2 {
-    color: #ffffff;
-    font-size: 38px;
-    margin: 20px 0;
+    color: var(--text);
+    font-size: clamp(28px, 6vw, 42px);
+    line-height: 1.2;
+    margin: 16px 0;
 }
 
+.about h2 span,
 .section-heading h2 span {
-    color: #b5f36b;
+    color: var(--lime);
     font-size: inherit;
     letter-spacing: normal;
 }
 
+.about p,
 .section-heading p {
-    color: #c5d5cb;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+.section-heading p {
     max-width: 650px;
-    margin: 0 auto 50px;
+    margin: 0 auto 40px;
     line-height: 1.7;
 }
 
-.challenge-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
-}
+/* ---------- CARD GRIDS (1 col on phones -> 3 on desktop) ---------- */
 
-.challenge-card {
-    background: #103326;
-    padding: 35px 25px;
-    border: 1px solid #28513d;
-    border-radius: 18px;
-    text-align: left;
-    transition: 0.3s ease;
-}
-
-.challenge-card:hover {
-    transform: translateY(-8px);
-    border-color: #b5f36b;
-}
-
-.challenge-card h3 {
-    color: #b5f36b;
-    font-size: 21px;
-    margin-bottom: 15px;
-}
-
-.challenge-card p {
-    color: #c5d5cb;
-    line-height: 1.7;
-    font-size: 14px;
-}
-/* SOLUTIONS SECTION */
-
-.solutions {
-    padding: 100px 12%;
-    background: #0a241a;
-    text-align: center;
-}
-
-.solution-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
-}
-
-.solution-card {
-    background: #103326;
-    padding: 35px 25px;
-    border: 1px solid #28513d;
-    border-radius: 18px;
-    text-align: left;
-    transition: 0.3s ease;
-}
-
-.solution-card:hover {
-    transform: translateY(-8px);
-    border-color: #b5f36b;
-}
-
-.solution-icon {
-    font-size: 35px;
-    margin-bottom: 20px;
-}
-
-.solution-card h3 {
-    color: #b5f36b;
-    font-size: 21px;
-    margin-bottom: 15px;
-}
-
-.solution-card p {
-    color: #c5d5cb;
-    line-height: 1.7;
-    font-size: 14px;
-}
-/* IMPACT SECTION */
-
-.impact {
-    padding: 100px 12%;
-    background: #071b13;
-    text-align: center;
-}
-
+.challenge-container,
+.solution-container,
 .impact-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
+.challenge-card,
+.solution-card,
 .impact-card {
-    padding: 40px 25px;
-    background: #103326;
-    border: 1px solid #28513d;
+    background: var(--card);
+    border: 1px solid var(--border);
     border-radius: 18px;
-    transition: 0.3s ease;
+    padding: 30px 24px;
+    text-align: left;
+    transition: transform 0.3s ease, border-color 0.3s ease;
 }
 
-.impact-card:hover {
-    transform: translateY(-8px);
-    border-color: #b5f36b;
-}
-
-.impact-card h2 {
-    color: #b5f36b;
-    font-size: 42px;
+.challenge-card h3,
+.solution-card h3 {
+    color: var(--lime);
+    font-size: 21px;
     margin-bottom: 12px;
 }
 
-.impact-card h3 {
+.challenge-card p,
+.solution-card p,
+.impact-card p {
+    color: var(--muted);
+    line-height: 1.7;
+    font-size: 15px;
+}
+
+.solution-icon { font-size: 35px; margin-bottom: 16px; }
+
+.impact-card { text-align: center; padding: 36px 24px; }
+
+.impact-number {
+    color: var(--lime);
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+.impact-card h4 {
     color: white;
     font-size: 20px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
-.impact-card p {
-    color: #c5d5cb;
-    font-size: 14px;
-    line-height: 1.7;
-}
-/* JOIN THE MOVEMENT SECTION */
+/* ---------- DAILY ECO CHALLENGE ---------- */
 
-.join {
-    padding: 110px 12%;
-    background: linear-gradient(
-        135deg,
-        #103326,
-        #071b13
-    );
-    text-align: center;
-}
-
-.join-content {
-    max-width: 750px;
-    margin: auto;
-}
-
-.join-content > span {
-    color: #b5f36b;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 2px;
-}
-
-.join-content h2 {
-    color: white;
-    font-size: 48px;
-    margin: 25px 0;
-}
-
-.join-content h2 span {
-    color: #b5f36b;
-}
-
-.join-content p {
-    color: #c5d5cb;
-    line-height: 1.8;
-    margin-bottom: 35px;
-}
-
-.join-btn {
-    display: inline-block;
-    background: #b5f36b;
-    color: #071b13;
-    padding: 15px 30px;
-    border-radius: 30px;
-    text-decoration: none;
-    font-weight: 700;
-    transition: 0.3s ease;
-}
-
-.join-btn:hover {
-    background: white;
-    transform: translateY(-4px);
-}
-
-/* DAILY ECO CHALLENGE */
-
-#challenge {
-    padding: 85px 8%;
-    background: #0a241a;
-}
-
-#challenge .section-heading {
-    text-align: center;
-    max-width: 700px;
-    margin: 0 auto 35px;
-}
-
-#challenge .eyebrow {
-    color: #b5f36b;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    margin-bottom: 14px;
-}
-
-#challenge .section-heading h2 {
-    color: white;
-    font-size: clamp(28px, 4vw, 40px);
-    margin-bottom: 12px;
-}
-
-#challenge .section-heading p:last-child {
-    color: #c5d5cb;
-    line-height: 1.7;
-}
-
-#challenge .challenge-card {
+.daily-card {
     max-width: 760px;
     margin: auto;
-    padding: 32px;
-    background: #103326;
-    border: 1px solid #28513d;
+    padding: 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
     border-radius: 20px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
     text-align: left;
 }
 
-#challenge .challenge-topline {
+.daily-topline {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     gap: 12px;
     flex-wrap: wrap;
-    margin-bottom: 25px;
+    margin-bottom: 22px;
 }
 
-#challenge .pill {
-    color: #b5f36b;
-    background: rgba(181,243,107,0.1);
+.pill {
+    color: var(--lime);
+    background: rgba(181, 243, 107, 0.1);
     padding: 6px 12px;
     border-radius: 20px;
     font-size: 11px;
@@ -501,76 +352,309 @@ background:
     letter-spacing: 1px;
 }
 
-#challenge .points-label {
-    color: #b5f36b;
-    font-weight: 700;
-    font-size: 14px;
-}
+.points-label { color: var(--lime); font-weight: 700; font-size: 14px; }
 
-#challenge .challenge-card h3 {
-    color: #b5f36b;
-    font-size: 25px;
+.daily-card h3 {
+    color: var(--lime);
+    font-size: clamp(20px, 4vw, 25px);
     margin-bottom: 8px;
 }
 
-#challenge #challengeDescription {
-    color: #c5d5cb;
+#challengeDescription {
+    color: var(--muted);
     margin-bottom: 22px;
     line-height: 1.7;
 }
 
-#challenge .button {
-    border: 0;
-    border-radius: 30px;
-    padding: 13px 23px;
-    font: inherit;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-}
+.status-message { min-height: 25px; color: var(--lime); margin-top: 12px; }
 
-#challenge .button:hover {
-    transform: translateY(-3px);
-}
-
-#challenge .button-primary {
-    background: #b5f36b;
-    color: #102319;
-}
-
-#challenge .button-primary:disabled {
-    opacity: 0.7;
-    cursor: default;
-    transform: none;
-}
-
-#challenge .status-message {
-    min-height: 25px;
-    color: #b5f36b;
-    margin-top: 12px;
-}
-
-#challenge .points-box {
-    border-top: 1px solid #28513d;
-    margin-top: 22px;
-    padding-top: 18px;
+.points-box {
+    border-top: 1px solid var(--border);
+    margin-top: 20px;
+    padding-top: 16px;
     display: flex;
     justify-content: space-between;
-    color: #c5d5cb;
+    align-items: center;
+    color: var(--muted);
 }
 
-#challenge .points-box strong {
-    color: #b5f36b;
-    font-size: 24px;
+.points-box strong { color: var(--lime); font-size: 24px; }
+
+/* ---------- BUTTONS (shared) ---------- */
+
+.button {
+    display: inline-block;
+    border: 0;
+    border-radius: 30px;
+    padding: 14px 24px;
+    min-height: 46px;                 /* comfortable tap target */
+    font: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    touch-action: manipulation;       /* removes 300ms tap delay */
+    transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease;
 }
 
-@media (max-width: 700px) {
-    #challenge {
-        padding: 65px 7%;
+.button:active { transform: scale(0.97); }
+
+.button-primary { background: var(--lime); color: #102319; }
+.button-primary:disabled { opacity: 0.7; cursor: default; transform: none; }
+
+.button-outline {
+    background: transparent;
+    color: var(--lime);
+    border: 1px solid var(--lime);
+}
+
+.button-outline:active { background: rgba(181, 243, 107, 0.12); }
+
+/* ---------- WASTE GUIDE ---------- */
+
+.search-panel {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 24px;
+    text-align: left;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+}
+
+.search-panel label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--lime);
+}
+
+.search-row {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.search-row input {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 18px;
+    font: inherit;
+    font-size: 16px;                  /* 16px stops iOS zooming on focus */
+    color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+}
+
+.search-row input::placeholder { color: #7f978a; }
+.search-row input:focus { border-color: var(--lime); outline: none; box-shadow: 0 0 0 3px rgba(181, 243, 107, 0.25); }
+
+.result-card {
+    margin-top: 20px;
+    padding: 20px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+.result-card h3 { color: var(--lime); font-size: 22px; margin-bottom: 6px; }
+
+.category-tag {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--lime);
+    background: rgba(181, 243, 107, 0.1);
+    border-radius: 20px;
+}
+
+.fine-print { margin-top: 16px; font-size: 13px; color: #8fa699; line-height: 1.6; }
+
+/* ---------- ECO FACTS ---------- */
+
+.fact-card {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 30px 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+}
+
+.fact-icon { display: block; font-size: 42px; margin-bottom: 10px; }
+
+.fact-count {
+    color: var(--lime);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 14px;
+}
+
+.fact-card h3 {
+    font-size: clamp(18px, 4.2vw, 24px);
+    line-height: 1.5;
+    margin-bottom: 14px;
+}
+
+.source { color: #8fa699; font-size: 13px; line-height: 1.6; margin-bottom: 24px; overflow-wrap: anywhere; }
+
+/* ---------- JOIN ---------- */
+
+.join {
+    padding: 80px var(--pad-x);
+    background: linear-gradient(135deg, var(--card), var(--bg));
+    text-align: center;
+}
+
+.join-content { max-width: 750px; margin: auto; }
+
+.join-content > span {
+    color: var(--lime);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.join-content h2 {
+    color: white;
+    font-size: clamp(30px, 7vw, 48px);
+    line-height: 1.15;
+    margin: 22px 0;
+}
+
+.join-content h2 span { color: var(--lime); }
+
+.join-content p { color: var(--muted); line-height: 1.8; margin-bottom: 32px; }
+
+.join-btn {
+    display: inline-block;
+    background: var(--lime);
+    color: var(--bg);
+    padding: 15px 30px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: 0.3s ease;
+}
+
+/* ---------- FOOTER ---------- */
+
+.footer {
+    padding: 28px var(--pad-x);
+    text-align: center;
+    color: #8fa699;
+    font-size: 14px;
+    border-top: 1px solid var(--border);
+}
+
+/* ==========================================================
+   HOVER EFFECTS - only on devices that really hover
+   (prevents "stuck" hover states after a tap on phones)
+   ========================================================== */
+
+@media (hover: hover) {
+    .challenge-card:hover,
+    .solution-card:hover,
+    .impact-card:hover { transform: translateY(-8px); border-color: var(--lime); }
+
+    .primary-button:hover,
+    .button:hover { transform: translateY(-3px); }
+
+    .join-btn:hover { background: white; transform: translateY(-4px); }
+    .button-outline:hover { background: rgba(181, 243, 107, 0.12); }
+}
+
+/* ==========================================================
+   TABLET  (>= 640px)
+   ========================================================== */
+
+@media (min-width: 640px) {
+    :root { --pad-x: 7%; }
+
+    .about, .challenges, .solutions, .impact,
+    .daily, .waste, .facts { padding: 85px var(--pad-x); }
+
+    .impact-container { grid-template-columns: repeat(3, 1fr); }
+
+    .search-row { flex-direction: row; }
+    .search-row input { flex: 1; }
+
+    .daily-card, .search-panel { padding: 32px; }
+    .fact-card { padding: 40px; }
+}
+
+@media (min-width: 760px) {
+    .challenge-container,
+    .solution-container { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ==========================================================
+   DESKTOP  (>= 1024px) - nav becomes a horizontal bar
+   ========================================================== */
+
+@media (min-width: 1024px) {
+    :root { --nav-h: 85px; --pad-x: 8%; }
+
+    .nav-toggle { display: none; }
+
+    .nav-menu {
+        position: static;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 28px;
+        padding: 0;
+        background: transparent;
+        border: 0;
+        max-height: none;
+        overflow: visible;
     }
 
-    #challenge .challenge-card {
-        padding: 23px;
+    .nav-links { flex-direction: row; gap: clamp(14px, 1.8vw, 30px); }
+
+    .nav-links a {
+        padding: 6px 0;
+        font-size: 14px;
+        border-bottom: 0;
     }
+
+    .nav-button { padding: 12px 20px; font-size: 14px; white-space: nowrap; }
+
+    .hero { padding: 80px 12%; }
+
+    .about, .challenges, .solutions, .impact { padding: 100px 12%; }
+    .daily, .waste, .facts { padding: 90px 12%; }
+
+    .challenge-container,
+    .solution-container { grid-template-columns: repeat(3, 1fr); gap: 25px; }
+
+    .impact-container { gap: 25px; }
+
+    .join { padding: 110px 12%; }
+}
+
+/* ==========================================================
+   VERY SMALL PHONES
+   ========================================================== */
+
+@media (max-width: 380px) {
+    .logo { font-size: 21px; }
+    .primary-button, .secondary-button { width: 100%; }
+    .daily-card, .search-panel { padding: 20px; }
+}
+
+/* ==========================================================
+   ACCESSIBILITY - respect "reduce motion"
+   ========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; animation: none !important; }
 }

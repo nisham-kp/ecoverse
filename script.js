@@ -1,7 +1,42 @@
-function showMessage() {
+// ----------------------------------------------
+// MOBILE NAVIGATION (hamburger menu)
+// ----------------------------------------------
+const navToggle = document.getElementById("navToggle");
+const navMenu = document.getElementById("navMenu");
 
-    alert("Welcome to EcoVerse! Let's build a greener tomorrow.");
+function setMenu(open) {
+  navMenu.classList.toggle("open", open);
+  navToggle.setAttribute("aria-expanded", String(open));
+  navToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+}
 
+navToggle.addEventListener("click", function () {
+  setMenu(!navMenu.classList.contains("open"));
+});
+
+// close the menu after choosing a link, pressing Escape, or resizing to desktop
+navMenu.addEventListener("click", function (e) {
+  if (e.target.closest("a")) setMenu(false);
+});
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape") setMenu(false);
+});
+window.matchMedia("(min-width: 1024px)").addEventListener("change", function () {
+  setMenu(false);
+});
+
+// highlight the nav link of the section currently on screen
+const navAnchors = document.querySelectorAll(".nav-links a");
+if ("IntersectionObserver" in window) {
+  const observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      navAnchors.forEach(function (a) {
+        a.classList.toggle("active", a.getAttribute("href") === "#" + entry.target.id);
+      });
+    });
+  }, { rootMargin: "-45% 0px -50% 0px" });
+  document.querySelectorAll("main section[id]").forEach(function (s) { observer.observe(s); });
 }
 
 // ----------------------------------------------
@@ -61,8 +96,20 @@ const pointsElement = document.getElementById("pointsTotal");
 titleElement.textContent = todaysChallenge.title;
 descriptionElement.textContent = todaysChallenge.description;
 
+function storageGet(key) {
+  try { return localStorage.getItem(key); } catch (e) { return null; }
+}
+
+function storageSet(key, value) {
+  try { localStorage.setItem(key, value); } catch (e) { /* private mode: ignore */ }
+}
+
+let sessionPoints = 0;      // fallback when storage is unavailable
+let sessionCompleted = null;
+
 function getPoints() {
-  return Number(localStorage.getItem("ecoversePoints") || 0);
+  const stored = Number(storageGet("ecoversePoints"));
+  return Math.max(stored || 0, sessionPoints);
 }
 
 function updatePointsDisplay() {
@@ -70,7 +117,7 @@ function updatePointsDisplay() {
 }
 
 function updateChallengeButton() {
-  const completedDate = localStorage.getItem("ecoverseCompletedDate");
+  const completedDate = storageGet("ecoverseCompletedDate") || sessionCompleted;
   if (completedDate === dateKey) {
     completeButton.disabled = true;
     completeButton.textContent = "Challenge completed ✓";
@@ -79,15 +126,17 @@ function updateChallengeButton() {
 }
 
 completeButton.addEventListener("click", function () {
-  const completedDate = localStorage.getItem("ecoverseCompletedDate");
+  const completedDate = storageGet("ecoverseCompletedDate") || sessionCompleted;
   if (completedDate === dateKey) {
     statusElement.textContent = "You have already completed today's challenge.";
     return;
   }
 
   const newTotal = getPoints() + 10;
-  localStorage.setItem("ecoversePoints", String(newTotal));
-  localStorage.setItem("ecoverseCompletedDate", dateKey);
+  sessionPoints = newTotal;
+  sessionCompleted = dateKey;
+  storageSet("ecoversePoints", String(newTotal));
+  storageSet("ecoverseCompletedDate", dateKey);
 
   updatePointsDisplay();
   updateChallengeButton();
@@ -105,6 +154,7 @@ const wasteItems = [
   { names: ["vegetable peels", "vegetable peel", "food scraps", "leftover food"], category: "Biodegradable", instruction: "Use the organic waste collection or a suitable home compost system." },
   { names: ["dry leaves", "leaves", "garden waste"], category: "Biodegradable", instruction: "Compost or use the local garden-waste collection where available." },
   { names: ["tea leaves", "coffee grounds"], category: "Biodegradable", instruction: "Usually suitable for composting; check local collection guidance." },
+  { names: ["paper plate", "paper cup", "tissue box"], category: "General waste", instruction: "Food-soiled or plastic-coated paper is usually not accepted with clean paper recycling. Follow local waste rules." },
   { names: ["newspaper", "paper", "cardboard", "paper box"], category: "Recyclable", instruction: "Keep clean and dry. Recycle through an accepted paper collection service." },
   { names: ["plastic bottle", "water bottle", "pet bottle"], category: "Recyclable", instruction: "Empty and rinse. Recycle only if this plastic type is accepted locally." },
   { names: ["glass bottle", "glass jar"], category: "Recyclable", instruction: "Keep separate and follow local glass collection rules. Wrap broken glass safely." },
@@ -127,37 +177,74 @@ const wasteSearch = document.getElementById("wasteSearch");
 const wasteResult = document.getElementById("wasteResult");
 const searchWasteButton = document.getElementById("searchWaste");
 
+// lower-case, strip punctuation and trailing plural "s" so "batteries"/"battery" style variants compare fairly
+function normalise(text) {
+  return text.toLowerCase().replace(/[^a-z0-9 ]/g, " ").split(/\s+/).filter(Boolean)
+    .map(function (w) { return w.length > 3 && w.endsWith("s") && !w.endsWith("ss") ? w.slice(0, -1) : w; })
+    .join(" ");
+}
+
+// true when `needle` appears in `haystack` as whole words (so "phone" does NOT match "headphones")
+function containsWholeWords(haystack, needle) {
+  return (" " + haystack + " ").includes(" " + needle + " ");
+}
+
+function findWasteMatch(query) {
+  const q = normalise(query);
+  let best = null;
+  let bestScore = 0;
+
+  wasteItems.forEach(function (item) {
+    item.names.forEach(function (name) {
+      const n = normalise(name);
+      let score = 0;
+      if (n === q) score = 1000 + n.length;                          // exact match wins
+      else if (containsWholeWords(q, n)) score = n.length;           // "old plastic bottle" -> "plastic bottle"
+      else if (containsWholeWords(n, q)) score = q.length / 2;       // "bottle" -> "plastic bottle"
+      if (score > bestScore) { bestScore = score; best = item; }
+    });
+  });
+  return best;
+}
+
+function showResult(title, text, tag) {
+  wasteResult.textContent = "";
+  const h = document.createElement("h3");
+  h.textContent = title;
+  wasteResult.appendChild(h);
+  if (tag) {
+    const t = document.createElement("span");
+    t.className = "category-tag";
+    t.textContent = tag;
+    wasteResult.appendChild(t);
+  }
+  const p = document.createElement("p");
+  p.textContent = text;
+  wasteResult.appendChild(p);
+}
+
 function searchWasteItem() {
-  const query = wasteSearch.value.trim().toLowerCase();
+  const query = wasteSearch.value.trim();
 
   if (!query) {
-    wasteResult.innerHTML = "<p>Please enter an item to search.</p>";
+    showResult("Enter an item", "Type something like banana peel, battery or newspaper.");
     return;
   }
 
   if (query.length < 3) {
-    wasteResult.innerHTML = "<p>Please type at least 3 letters.</p>";
+    showResult("Too short", "Please type at least 3 letters.");
     return;
   }
 
-  // 1) Prefer an exact match, 2) otherwise fall back to a partial match
-  const match =
-    wasteItems.find(item => item.names.includes(query)) ||
-    wasteItems.find(item =>
-      item.names.some(name => name.includes(query) || query.includes(name))
-    );
+  const match = findWasteMatch(query);
 
   if (!match) {
-    wasteResult.innerHTML =
-      "<h3>Item not found</h3><p>We do not have guidance for this item yet. Check your local municipality's waste instructions before disposing of it.</p>";
+    showResult("Item not found",
+      "We do not have guidance for this item yet. Check your local municipality's waste instructions before disposing of it.");
     return;
   }
 
-  wasteResult.innerHTML = `
-    <h3>${match.category}</h3>
-    <span class="category-tag">Suggested category</span>
-    <p>${match.instruction}</p>
-  `;
+  showResult(match.category, match.instruction, "Suggested category");
 }
 
 searchWasteButton.addEventListener("click", searchWasteItem);
